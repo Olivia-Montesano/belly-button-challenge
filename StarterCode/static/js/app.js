@@ -1,7 +1,4 @@
 //Use the D3 library to read in samples.json from the "samples.json"
-//const "samples.json" = 'https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json';
-      //create a then function to get to samples data, sort, and slice top 10
-
 function main() {
    var selector = d3.select('#selDataset')
    d3.json("samples.json").then(
@@ -47,20 +44,92 @@ function demoInfo(sample) {
 function buildCharts(sample) {
    d3.json("samples.json").then(
       (data) => {
-         var metaData = data.metadata;
-         console.log(metaData);
-         var metaArray = metaData.filter(sampleObj=>sampleObj.id==sample);
-         var metaResult = metaArray[0];
-         var wfreq = metaResult.wfreq;
+         let sampleValues=data.samples.filter(obj=>obj.id===sample)[0].sample_values;
+         console.log(sampleValues);
+         let otuIds=data.samples.filter(obj=>obj.id==sample)[0].otu_ids;
+         console.log(otuIds);
+         let otuLabels=data.samples.filter(obj=>obj.id==sample)[0].otu_labels;
+         console.log(otuLabels);
+         
+         let barInfo=[{
+            x: sampleValues.slice(0, 10).reverse(),
+            y: otuIds.slice(0,10).map(otu=> `OTU ${otu}`).reverse(),
+            text: otuLabels.slice(0,10).reverse(),
+            orientation: 'h',
+            type: 'bar'
+         }]
 
-      console.log(data)
-      var samples = data.samples;
-      console.log(samples);
-      //var otu_ids = samples.filter(samples.otu_ids==otu_ids);
-      // console.log(otu_ids)
-   })};
+         Plotly.newPlot('bar', barInfo)
+// Create a bubble chart that displays each sample.
+         let bubbleData= [{
+            x: otuIds,
+            y: sampleValues,
+            text: otuLabels,
+            mode: 'markers',
+            marker: {
+               color: otuIds,
+               size: sampleValues
+            }
+         }]
+
+         let layout = {
+            xaxis: {
+               title: {
+                  text: 'OTU ID',
+               },
+            },
+         }
+         Plotly.newPlot('bubble', bubbleData, layout);
+      })};
+
+
 
 
 //
 //Create a horizontal bar chart with a dropdown menu to display the 
  //top 10 OTUs found in that individual. 
+
+
+
+
+// Create a bubble chart that displays each sample.
+
+
+
+//Creating a gauge
+// var data = [
+//    {
+//      type: "indicator",
+//      mode: "gauge+number+delta",
+//      value: 420,
+//      title: { text: "Speed", font: { size: 24 } },
+//      delta: { reference: 400, increasing: { color: "RebeccaPurple" } },
+//      gauge: {
+//        axis: { range: [null, 500], tickwidth: 1, tickcolor: "darkblue" },
+//        bar: { color: "darkblue" },
+//        bgcolor: "white",
+//        borderwidth: 2,
+//        bordercolor: "gray",
+//        steps: [
+//          { range: [0, 250], color: "cyan" },
+//          { range: [250, 400], color: "royalblue" }
+//        ],
+//        threshold: {
+//          line: { color: "red", width: 4 },
+//          thickness: 0.75,
+//          value: 490
+//        }
+//      }
+//    }
+//  ];
+ 
+//  var layout = {
+//    width: 500,
+//    height: 400,
+//    margin: { t: 25, r: 25, l: 25, b: 25 },
+//    paper_bgcolor: "lavender",
+//    font: { color: "darkblue", family: "Arial" }
+//  };
+ 
+//  Plotly.newPlot('myDiv', data, layout);
+ 
